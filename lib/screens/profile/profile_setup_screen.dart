@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polres_supabase/screens/home/home_screen.dart';
 import '../../services/auth_service.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
@@ -40,6 +41,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profil berhasil disimpan!')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     } catch (e) {
