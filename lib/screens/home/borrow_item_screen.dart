@@ -6,10 +6,7 @@ import '../../services/history_service.dart';
 class BorrowItemScreen extends StatefulWidget {
   final Item item;
 
-  const BorrowItemScreen({
-    super.key,
-    required this.item,
-  });
+  const BorrowItemScreen({super.key, required this.item});
 
   @override
   State<BorrowItemScreen> createState() => _BorrowItemScreenState();
@@ -46,7 +43,7 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
 
       // Decrease stock
       await ItemService.decreaseStock(widget.item.id, 1);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Barang berhasil dipinjam!')),
@@ -73,8 +70,8 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pinjam Barang'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -88,11 +85,16 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.blue.shade100,
+                      Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.blue.shade100,
+                        ),
                         child: widget.item.image.isNotEmpty
-                            ? ClipOval(
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
                                 child: Image.network(
                                   widget.item.image,
                                   width: 80,
@@ -186,4 +188,4 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
       ),
     );
   }
-} 
+}

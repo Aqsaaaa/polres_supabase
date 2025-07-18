@@ -51,7 +51,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Konfirmasi'),
-        content: Text('Apakah Anda yakin ingin menghapus barang "${item.name}"?'),
+        content: Text(
+          'Apakah Anda yakin ingin menghapus barang "${item.name}"?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -88,111 +90,102 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventori Barang'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        title: const Center(child: Text('Inventori Barang')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.blue,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadItems,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadItems),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _items.isEmpty
-              ? const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.inventory_2_outlined,
-                        size: 80,
-                        color: Colors.grey,
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Belum ada barang',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.inventory_2_outlined,
+                    size: 80,
+                    color: Colors.grey,
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadItems,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _items.length,
-                    itemBuilder: (context, index) {
-                      final item = _items[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.blue.shade100,
-                            child: item.image.isNotEmpty
-                                ? ClipOval(
-                                    child: Image.network(
-                                      item.image,
-                                      width: 40,
-                                      height: 40,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const Icon(
-                                          Icons.inventory_2,
-                                          color: Colors.blue,
-                                        );
-                                      },
-                                    ),
-                                  )
-                                : const Icon(
-                                    Icons.inventory_2,
-                                    color: Colors.blue,
-                                  ),
-                          ),
-                          title: Text(
-                            item.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text('Stok: ${item.stock}'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (item.stock > 0)
-                                IconButton(
-                                  icon: const Icon(Icons.remove_circle_outline),
-                                  color: Colors.orange,
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => BorrowItemScreen(item: item),
-                                      ),
-                                    ).then((_) => _loadItems());
+                  SizedBox(height: 16),
+                  Text(
+                    'Belum ada barang',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadItems,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _items.length,
+                itemBuilder: (context, index) {
+                  final item = _items[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blue.shade100,
+                        child: item.image.isNotEmpty
+                            ? ClipOval(
+                                child: Image.network(
+                                  item.image,
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.inventory_2,
+                                      color: Colors.blue,
+                                    );
                                   },
                                 ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                color: Colors.red,
-                                onPressed: () => _deleteItem(item),
-                              ),
-                            ],
+                              )
+                            : const Icon(Icons.inventory_2, color: Colors.blue),
+                      ),
+                      title: Text(
+                        item.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text('Stok: ${item.stock}'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (item.stock > 0)
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle_outline),
+                              color: Colors.orange,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BorrowItemScreen(item: item),
+                                  ),
+                                ).then((_) => _loadItems());
+                              },
+                            ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            color: Colors.red,
+                            onPressed: () => _deleteItem(item),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const AddItemScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const AddItemScreen()),
           ).then((_) => _loadItems());
         },
         backgroundColor: Colors.blue,
@@ -201,4 +194,4 @@ class _InventoryScreenState extends State<InventoryScreen> {
       ),
     );
   }
-} 
+}

@@ -10,7 +10,8 @@ class HistoryScreen extends StatefulWidget {
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProviderStateMixin {
+class _HistoryScreenState extends State<HistoryScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<History> _borrowedItems = [];
   List<History> _returnedItems = [];
@@ -37,7 +38,7 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
     try {
       final borrowed = await HistoryService.getBorrowedItems();
       final returned = await HistoryService.getReturnedItems();
-      
+
       setState(() {
         _borrowedItems = borrowed;
         _returnedItems = returned;
@@ -62,7 +63,9 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Konfirmasi'),
-        content: Text('Apakah Anda yakin ingin mengembalikan barang "${history.itemName}"?'),
+        content: Text(
+          'Apakah Anda yakin ingin mengembalikan barang "${history.itemName}"?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -80,12 +83,12 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
       try {
         // Update history status
         await HistoryService.returnItem(history.id);
-        
+
         // Increase stock
         await ItemService.increaseStock(history.itemId, 1);
-        
+
         await _loadHistory();
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Barang berhasil dikembalikan!')),
@@ -94,7 +97,9 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal mengembalikan barang: ${e.toString()}')),
+            SnackBar(
+              content: Text('Gagal mengembalikan barang: ${e.toString()}'),
+            ),
           );
         }
       }
@@ -106,7 +111,9 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: isBorrowed ? Colors.orange.shade100 : Colors.green.shade100,
+          backgroundColor: isBorrowed
+              ? Colors.orange.shade100
+              : Colors.green.shade100,
           child: Icon(
             isBorrowed ? Icons.remove_circle : Icons.check_circle,
             color: isBorrowed ? Colors.orange : Colors.green,
@@ -122,7 +129,7 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
             Text('Peminjam: ${history.borrowerName}'),
             Text('Penanggung Jawab: ${history.responsiblePerson}'),
             Text(
-              isBorrowed 
+              isBorrowed
                   ? 'Dipinjam: ${_formatDate(history.createdAt)}'
                   : 'Dikembalikan: ${_formatDate(history.returnedAt!)}',
             ),
@@ -147,22 +154,32 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Peminjaman'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          tabs: const [
-            Tab(text: 'Sedang Dipinjam'),
-            Tab(text: 'Sudah Dikembalikan'),
-          ],
+        title: const Text('History', style: TextStyle(color: Colors.blue)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.blue,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(70.0),
+          child: Column(
+            children: [
+              TabBar(
+                indicatorAnimation: TabIndicatorAnimation.elastic,
+                indicatorColor: Color(Colors.blue.value),
+                controller: _tabController,
+
+                tabs: const [
+                  Tab(text: 'Sedang Dipinjam'),
+                  Tab(text: 'Sudah Dikembalikan'),
+                ],
+                labelColor: Colors.blue,
+                unselectedLabelColor: Colors.black,
+              ),
+            ],
+          ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadHistory,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadHistory),
         ],
       ),
       body: _isLoading
@@ -176,11 +193,7 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.history,
-                              size: 80,
-                              color: Colors.grey,
-                            ),
+                            Icon(Icons.history, size: 80, color: Colors.grey),
                             SizedBox(height: 16),
                             Text(
                               'Tidak ada barang yang sedang dipinjam',
@@ -198,22 +211,21 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
                           padding: const EdgeInsets.all(16),
                           itemCount: _borrowedItems.length,
                           itemBuilder: (context, index) {
-                            return _buildHistoryCard(_borrowedItems[index], true);
+                            return _buildHistoryCard(
+                              _borrowedItems[index],
+                              true,
+                            );
                           },
                         ),
                       ),
-                
+
                 // Sudah Dikembalikan
                 _returnedItems.isEmpty
                     ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.history,
-                              size: 80,
-                              color: Colors.grey,
-                            ),
+                            Icon(Icons.history, size: 80, color: Colors.grey),
                             SizedBox(height: 16),
                             Text(
                               'Tidak ada riwayat pengembalian',
@@ -231,7 +243,10 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
                           padding: const EdgeInsets.all(16),
                           itemCount: _returnedItems.length,
                           itemBuilder: (context, index) {
-                            return _buildHistoryCard(_returnedItems[index], false);
+                            return _buildHistoryCard(
+                              _returnedItems[index],
+                              false,
+                            );
                           },
                         ),
                       ),
@@ -239,4 +254,4 @@ class _HistoryScreenState extends State<HistoryScreen> with SingleTickerProvider
             ),
     );
   }
-} 
+}

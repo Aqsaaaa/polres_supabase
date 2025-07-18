@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'inventory_screen.dart';
 import 'history_screen.dart';
-import 'profile_screen.dart';
+// import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,43 +12,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  
+  int _currentIndex = 1;
+
   final List<Widget> _screens = [
     const InventoryScreen(),
     const HistoryScreen(),
-    const ProfileScreen(),
+    // const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _currentIndex,
+        height: 60.0,
+        backgroundColor: Colors.transparent,
+        color: Colors.blue,
+        buttonBackgroundColor: Colors.blue,
+        animationDuration: const Duration(milliseconds: 300),
+        animationCurve: Curves.easeInOut,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inventory_2),
-            label: 'Inventori',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Riwayat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
-          ),
+        items: const <Widget>[
+          Icon(Icons.inventory_2, size: 30, color: Colors.white),
+          Icon(Icons.history, size: 30, color: Colors.white),
+          // Icon(Icons.person, size: 30, color: Colors.black),
         ],
       ),
     );
   }
-} 
+}
