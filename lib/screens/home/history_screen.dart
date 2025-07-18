@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../models/history.dart';
 import '../../services/history_service.dart';
 import '../../services/item_service.dart';
@@ -183,7 +184,12 @@ class _HistoryScreenState extends State<HistoryScreen>
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 50,
+              ),
+            )
           : TabBarView(
               controller: _tabController,
               children: [

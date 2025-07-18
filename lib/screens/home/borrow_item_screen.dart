@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../models/item.dart';
 import '../../services/item_service.dart';
 import '../../services/history_service.dart';
@@ -176,7 +177,10 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
                   foregroundColor: Colors.white,
                 ),
                 child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? LoadingAnimationWidget.staggeredDotsWave(
+                        color: Colors.white,
+                        size: 20,
+                      )
                     : const Text(
                         'Pinjam Barang',
                         style: TextStyle(fontSize: 16),

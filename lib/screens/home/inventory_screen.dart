@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../models/item.dart';
 import '../../services/item_service.dart';
 import 'add_item_screen.dart';
@@ -99,7 +100,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.white,
+                size: 20,
+              ),
+            )
           : _items.isEmpty
           ? const Center(
               child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../services/auth_service.dart';
 import '../../models/user.dart' as app_user;
 
@@ -86,7 +87,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         foregroundColor: Colors.white,
       ),
       body: _currentUser == null
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 50,
+              ),
+            )
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import '../../services/item_service.dart';
@@ -39,22 +40,24 @@ class _AddItemScreenState extends State<AddItemScreen> {
         maxHeight: 1024,
         imageQuality: 85,
       );
-      
+
       if (pickedFile != null) {
         // Check file size (limit to 5MB)
         final file = File(pickedFile.path);
         final fileSize = await file.length();
         const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-        
+
         if (fileSize > maxSize) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Ukuran file terlalu besar. Maksimal 5MB.')),
+              const SnackBar(
+                content: Text('Ukuran file terlalu besar. Maksimal 5MB.'),
+              ),
             );
           }
           return;
         }
-        
+
         setState(() {
           _pickedImage = file;
           _uploadedImageUrl = null; // Reset uploaded URL
@@ -117,13 +120,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
       final extension = _pickedImage!.path.split('.').last.toLowerCase();
       const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
       if (!allowedExtensions.contains(extension)) {
-        throw Exception('Format file tidak didukung. Gunakan JPG, PNG, GIF, atau WebP.');
+        throw Exception(
+          'Format file tidak didukung. Gunakan JPG, PNG, GIF, atau WebP.',
+        );
       }
 
       // Generate unique filename with proper structure
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'items/${user.id}/$timestamp.$extension';
-      
+
       print('Uploading file: $fileName');
       print('File size: ${_pickedImage!.lengthSync() / 1024 / 1024} MB');
       print('File extension: $extension');
@@ -132,9 +137,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
       if (_uploadedImageUrl != null && _uploadedImageUrl!.isNotEmpty) {
         try {
           final oldFileName = _uploadedImageUrl!.split('/').last;
-          await supabase.storage
-              .from('item-images')
-              .remove(['items/${user.id}/$oldFileName']);
+          await supabase.storage.from('item-images').remove([
+            'items/${user.id}/$oldFileName',
+          ]);
         } catch (e) {
           print('Failed to delete old image: $e');
         }
@@ -144,7 +149,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
       final storageResponse = await supabase.storage
           .from('item-images')
           .upload(
-            fileName, 
+            fileName,
             _pickedImage!,
             fileOptions: const FileOptions(
               cacheControl: '3600',
@@ -158,7 +163,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
       final publicUrl = supabase.storage
           .from('item-images')
           .getPublicUrl(fileName);
-      
+
       print('Public URL: $publicUrl');
 
       setState(() {
@@ -174,7 +179,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
     } catch (e) {
       print('Upload error: $e');
       String errorMessage = 'Gagal mengupload gambar';
-      
+
       // Handle specific Supabase errors
       if (e.toString().contains('duplicate')) {
         errorMessage = 'File dengan nama yang sama sudah ada';
@@ -185,11 +190,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
       } else if (e.toString().contains('quota')) {
         errorMessage = 'Kuota storage telah habis';
       }
-      
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     } finally {
       if (mounted) {
@@ -314,18 +319,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
             width: double.infinity,
             errorBuilder: (context, error, stackTrace) {
               return const Center(
-                child: Icon(
-                  Icons.error,
-                  color: Colors.red,
-                  size: 40,
-                ),
+                child: Icon(Icons.error, color: Colors.red, size: 40),
               );
             },
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) return child;
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             },
           ),
         ),
@@ -345,16 +344,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.add_photo_alternate,
-                size: 40,
-                color: Colors.grey,
-              ),
+              Icon(Icons.add_photo_alternate, size: 40, color: Colors.grey),
               SizedBox(height: 8),
-              Text(
-                'Tap to select image',
-                style: TextStyle(color: Colors.grey),
-              ),
+              Text('Tap to select image', style: TextStyle(color: Colors.grey)),
             ],
           ),
         ),
@@ -392,26 +384,33 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // Image picker section
               _buildImagePreview(),
-              
+
               // Show upload status
               if (_uploadedImageUrl != null && _uploadedImageUrl!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Row(
                     children: [
-                      const Icon(Icons.check_circle, color: Colors.green, size: 16),
+                      const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 16,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Gambar berhasil diupload',
-                        style: TextStyle(color: Colors.green[700], fontSize: 12),
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              
+
               const SizedBox(height: 16),
               TextFormField(
                 controller: _stockController,
@@ -443,7 +442,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   foregroundColor: Colors.white,
                 ),
                 child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? Center(
+                        child: LoadingAnimationWidget.staggeredDotsWave(
+                          color: Colors.blue,
+                          size: 50,
+                        ),
+                      )
                     : const Text(
                         'Tambah Barang',
                         style: TextStyle(fontSize: 16),

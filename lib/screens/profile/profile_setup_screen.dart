@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:polres_supabase/screens/home/home_screen.dart';
 import '../../services/auth_service.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   final String userId;
 
-  const ProfileSetupScreen({
-    super.key,
-    required this.userId,
-  });
+  const ProfileSetupScreen({super.key, required this.userId});
 
   @override
   State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
@@ -37,7 +35,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         userId: widget.userId,
         name: _nameController.text.trim(),
       );
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profil berhasil disimpan!')),
@@ -80,11 +78,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(
-                  Icons.person,
-                  size: 80,
-                  color: Colors.blue,
-                ),
+                const Icon(Icons.person, size: 80, color: Colors.blue),
                 const SizedBox(height: 24),
                 const Text(
                   'Lengkapi Data Diri',
@@ -98,10 +92,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   'Silakan masukkan nama lengkap Anda',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
@@ -132,7 +123,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     foregroundColor: Colors.white,
                   ),
                   child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? Center(
+                          child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: Colors.blue,
+                            size: 50,
+                          ),
+                        )
                       : const Text(
                           'Simpan Profil',
                           style: TextStyle(fontSize: 16),
@@ -145,4 +141,4 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
   }
-} 
+}

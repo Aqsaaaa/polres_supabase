@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../services/auth_service.dart';
 import '../profile/profile_setup_screen.dart';
 
@@ -38,12 +39,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      
+
       if (mounted && response.user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registrasi berhasil! Silakan lengkapi profil Anda.')),
+          const SnackBar(
+            content: Text('Registrasi berhasil! Silakan lengkapi profil Anda.'),
+          ),
         );
-        
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -83,11 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(
-                  Icons.person_add,
-                  size: 80,
-                  color: Colors.blue,
-                ),
+                const Icon(Icons.person_add, size: 80, color: Colors.blue),
                 const SizedBox(height: 24),
                 const Text(
                   'Buat Akun Baru',
@@ -101,10 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   'Silakan isi data diri Anda',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
@@ -132,7 +128,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -161,7 +159,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                        _obscureConfirmPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -190,11 +190,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     foregroundColor: Colors.white,
                   ),
                   child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Daftar',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                      ? Center(
+                          child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: Colors.blue,
+                            size: 50,
+                          ),
+                        )
+                      : const Text('Daftar', style: TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
@@ -213,4 +215,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-} 
+}
