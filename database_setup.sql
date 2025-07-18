@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     item_name TEXT NOT NULL,
     borrower_name TEXT NOT NULL,
     responsible_person TEXT NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1,
     status TEXT NOT NULL DEFAULT 'borrowed' CHECK (status IN ('borrowed', 'returned')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     returned_at TIMESTAMP WITH TIME ZONE

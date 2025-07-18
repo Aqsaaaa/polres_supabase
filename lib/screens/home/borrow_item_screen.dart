@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../models/item.dart';
+import '../../services/auth_service.dart';
 import '../../services/item_service.dart';
 import '../../services/history_service.dart';
 
@@ -16,18 +17,34 @@ class BorrowItemScreen extends StatefulWidget {
 class _BorrowItemScreenState extends State<BorrowItemScreen> {
   final _formKey = GlobalKey<FormState>();
   final _borrowerNameController = TextEditingController();
-  final _responsiblePersonController = TextEditingController();
+  final _quantityController = TextEditingController(text: '1');
   bool _isLoading = false;
 
   @override
   void dispose() {
     _borrowerNameController.dispose();
-    _responsiblePersonController.dispose();
+    _quantityController.dispose();
     super.dispose();
   }
 
   Future<void> _borrowItem() async {
     if (!_formKey.currentState!.validate()) return;
+
+    final currentUser = AuthService.getCurrentUser();
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User belum login')),
+      );
+      return;
+    }
+
+    final int quantity = int.tryParse(_quantityController.text) ?? 1;
+    if (quantity <= 0 || quantity > widget.item.stock) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Jumlah pinjam harus antara 1 dan ${widget.item.stock}')),
+      );
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -39,11 +56,12 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
         itemId: widget.item.id,
         itemName: widget.item.name,
         borrowerName: _borrowerNameController.text.trim(),
-        responsiblePerson: _responsiblePersonController.text.trim(),
+        responsiblePerson: currentUser.name,
+        quantity: quantity,
       );
 
       // Decrease stock
-      await ItemService.decreaseStock(widget.item.id, 1);
+      await ItemService.decreaseStock(widget.item.id, quantity);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -154,16 +172,17 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _responsiblePersonController,
-                textCapitalization: TextCapitalization.words,
+                controller: _quantityController,
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Penanggung Jawab',
+                  labelText: 'Jumlah Pinjam',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.verified_user),
+                  prefixIcon: Icon(Icons.format_list_numbered),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Penanggung jawab tidak boleh kosong';
+                  final qty = int.tryParse(value ?? '');
+                  if (qty == null || qty <= 0 || qty > widget.item.stock) {
+                    return 'Masukkan jumlah pinjam yang valid';
                   }
                   return null;
                 },

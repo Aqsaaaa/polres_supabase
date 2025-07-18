@@ -60,12 +60,30 @@ class _HistoryScreenState extends State<HistoryScreen>
   }
 
   Future<void> _returnItem(History history) async {
+    final TextEditingController quantityController = TextEditingController(
+      text: history.quantity.toString(),
+    );
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Konfirmasi'),
-        content: Text(
-          'Apakah Anda yakin ingin mengembalikan barang "${history.itemName}"?',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Apakah Anda yakin ingin mengembalikan barang "${history.itemName}"?',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: quantityController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Jumlah yang dikembalikan',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -73,7 +91,20 @@ class _HistoryScreenState extends State<HistoryScreen>
             child: const Text('Batal'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              final int? qty = int.tryParse(quantityController.text);
+              if (qty == null || qty <= 0 || qty > history.quantity) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Masukkan jumlah yang valid (1-${history.quantity})',
+                    ),
+                  ),
+                );
+                return;
+              }
+              Navigator.pop(context, true);
+            },
             child: const Text('Kembalikan'),
           ),
         ],
@@ -81,12 +112,13 @@ class _HistoryScreenState extends State<HistoryScreen>
     );
 
     if (confirmed == true) {
+      final int quantityToReturn = int.parse(quantityController.text);
       try {
-        // Update history status
-        await HistoryService.returnItem(history.id);
+        // Update history status with partial return
+        await HistoryService.returnItem(history.id, quantityToReturn);
 
-        // Increase stock
-        await ItemService.increaseStock(history.itemId, 1);
+        // Increase stock by returned quantity
+        await ItemService.increaseStock(history.itemId, quantityToReturn);
 
         await _loadHistory();
 

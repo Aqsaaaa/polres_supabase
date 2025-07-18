@@ -26,6 +26,7 @@ class HistoryService {
     required String itemName,
     required String borrowerName,
     required String responsiblePerson,
+    required int quantity,
   }) async {
     final response = await supabase
         .from(Tables.transactions)
@@ -34,6 +35,7 @@ class HistoryService {
           'item_name': itemName,
           'borrower_name': borrowerName,
           'responsible_person': responsiblePerson,
+          'quantity': quantity,
           'status': 'borrowed',
           'created_at': DateTime.now().toIso8601String(),
         })
@@ -43,17 +45,45 @@ class HistoryService {
     return History.fromJson(response);
   }
 
-  static Future<History> returnItem(String historyId) async {
+  static Future<History> returnItem(String historyId, int quantityToReturn) async {
+    // Get current transaction
+    final currentTransaction = await supabase
+        .from(Tables.transactions)
+        .select()
+        .eq('id', historyId)
+        .single();
+
+    if (currentTransaction == null) {
+      throw Exception('Transaction not found');
+    }
+
+    int currentQuantity = currentTransaction['quantity'] ?? 1;
+    int newQuantity = currentQuantity - quantityToReturn;
+
+    if (newQuantity < 0) {
+      throw Exception('Return quantity exceeds borrowed quantity');
+    }
+
+    Map<String, dynamic> updateData = {};
+    if (newQuantity == 0) {
+      updateData = {
+        'status': 'returned',
+        'returned_at': DateTime.now().toIso8601String(),
+        'quantity': 0,
+      };
+    } else {
+      updateData = {
+        'quantity': newQuantity,
+      };
+    }
+
     final response = await supabase
         .from(Tables.transactions)
-        .update({
-          'status': 'returned',
-          'returned_at': DateTime.now().toIso8601String(),
-        })
+        .update(updateData)
         .eq('id', historyId)
         .select()
         .single();
-    
+
     return History.fromJson(response);
   }
 

@@ -9,6 +9,7 @@ class History {
   final String itemName;
   final String borrowerName;
   final String responsiblePerson;
+  final int quantity;
   final HistoryStatus status;
   final DateTime createdAt;
   final DateTime? returnedAt;
@@ -19,6 +20,7 @@ class History {
     required this.itemName,
     required this.borrowerName,
     required this.responsiblePerson,
+    required this.quantity,
     required this.status,
     required this.createdAt,
     this.returnedAt,
@@ -31,6 +33,7 @@ class History {
       itemName: json['item_name'] ?? '',
       borrowerName: json['borrower_name'] ?? '',
       responsiblePerson: json['responsible_person'] ?? '',
+      quantity: json['quantity'] ?? 1,
       status: HistoryStatus.values.firstWhere(
         (e) => e.toString() == 'HistoryStatus.${json['status']}',
         orElse: () => HistoryStatus.borrowed,
@@ -49,6 +52,7 @@ class History {
       'item_name': itemName,
       'borrower_name': borrowerName,
       'responsible_person': responsiblePerson,
+      'quantity': quantity,
       'status': status.toString().split('.').last,
       'created_at': createdAt.toIso8601String(),
       'returned_at': returnedAt?.toIso8601String(),
@@ -61,6 +65,7 @@ class History {
     String? itemName,
     String? borrowerName,
     String? responsiblePerson,
+    int? quantity,
     HistoryStatus? status,
     DateTime? createdAt,
     DateTime? returnedAt,
@@ -71,9 +76,10 @@ class History {
       itemName: itemName ?? this.itemName,
       borrowerName: borrowerName ?? this.borrowerName,
       responsiblePerson: responsiblePerson ?? this.responsiblePerson,
+      quantity: quantity ?? this.quantity,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       returnedAt: returnedAt ?? this.returnedAt,
     );
   }
-} 
+}
