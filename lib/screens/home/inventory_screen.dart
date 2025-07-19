@@ -3,6 +3,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../models/item.dart';
 import '../../services/item_service.dart';
 import 'add_item_screen.dart';
+import 'add_category_screen.dart';
 import 'borrow_item_screen.dart';
 
 class InventoryScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class InventoryScreen extends StatefulWidget {
 class _InventoryScreenState extends State<InventoryScreen> {
   List<Item> _items = [];
   bool _isLoading = true;
+  bool _showActionButtons = false;
 
   @override
   void initState() {
@@ -187,16 +189,90 @@ class _InventoryScreenState extends State<InventoryScreen> {
                 },
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddItemScreen()),
-          ).then((_) => _loadItems());
-        },
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            child: _showActionButtons
+                ? Column(
+                    key: const ValueKey('buttons'),
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FloatingActionButton(
+                        heroTag: 'add_item',
+                        onPressed: () {
+                          setState(() {
+                            _showActionButtons = false;
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddItemScreen(),
+                            ),
+                          ).then((_) => _loadItems());
+                        },
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        mini: true,
+                        tooltip: 'Add Item',
+                        child: const Icon(Icons.add),
+                      ),
+                      const SizedBox(height: 8),
+                      FloatingActionButton(
+                        heroTag: 'add_category',
+                        onPressed: () {
+                          setState(() {
+                            _showActionButtons = false;
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddCategoryScreen(),
+                            ),
+                          );
+                        },
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        mini: true,
+                        tooltip: 'Add Category',
+                        child: const Icon(Icons.category),
+                      ),
+                      const SizedBox(height: 8),
+                      FloatingActionButton(
+                        heroTag: 'close_buttons',
+                        onPressed: () {
+                          setState(() {
+                            _showActionButtons = false;
+                          });
+                        },
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        mini: true,
+                        tooltip: 'Close',
+                        child: const Icon(Icons.close),
+                      ),
+                    ],
+                  )
+                : Container(
+                    key: const ValueKey('main_button'),
+                    child: FloatingActionButton(
+                      mini: true,
+                      onPressed: () {
+                        setState(() {
+                          _showActionButtons = true;
+                        });
+                      },
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      child: const Icon(Icons.add),
+                    ),
+                  ),
+          ),
+        ],
       ),
     );
   }
