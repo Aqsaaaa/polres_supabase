@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS items (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
+    category TEXT DEFAULT '',
     image TEXT DEFAULT '',
     stock INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -23,6 +24,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     item_name TEXT NOT NULL,
     borrower_name TEXT NOT NULL,
     responsible_person TEXT NOT NULL,
+    category TEXT DEFAULT '',
+    purpose TEXT DEFAULT '',
     quantity INTEGER NOT NULL DEFAULT 1,
     status TEXT NOT NULL DEFAULT 'borrowed' CHECK (status IN ('borrowed', 'returned')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -127,4 +130,33 @@ INSERT INTO items (name, image, stock) VALUES
     ('Proyektor Epson', 'https://example.com/projector.jpg', 3),
     ('Speaker JBL', 'https://example.com/speaker.jpg', 8),
     ('Microphone Shure', 'https://example.com/microphone.jpg', 4)
-ON CONFLICT DO NOTHING; 
+ON CONFLICT DO NOTHING;
+
+-- Create categories table
+CREATE TABLE IF NOT EXISTS categories (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create RLS policies for categories table (allow all authenticated users to read/write)
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can view categories" ON categories
+    FOR SELECT USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can insert categories" ON categories
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can update categories" ON categories
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can delete categories" ON categories
+    FOR DELETE USING (auth.role() = 'authenticated');
+
+-- Create trigger to update updated_at timestamp for categories
+CREATE TRIGGER update_categories_updated_at
+    BEFORE UPDATE ON categories
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();

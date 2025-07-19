@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import '../../services/item_service.dart';
 import '../../utils/constants.dart';
+import '../../models/category.dart';
+import '../../services/category_service.dart';
 
 class AddItemScreen extends StatefulWidget {
   const AddItemScreen({super.key});
@@ -23,12 +25,39 @@ class _AddItemScreenState extends State<AddItemScreen> {
   File? _pickedImage;
   String? _uploadedImageUrl;
 
+   List<Category> _categories = [];
+  Category? _selectedCategory;
+
   @override
   void dispose() {
     _nameController.dispose();
     _imageController.dispose();
     _stockController.dispose();
     super.dispose();
+  }
+
+   @override
+    void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final categories = await CategoryService.getAllCategories();
+      setState(() {
+        _categories = categories;
+        if (_categories.isNotEmpty) {
+          _selectedCategory = _categories[0];
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal memuat kategori: ${e.toString()}')),
+        );
+      }
+    }
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -354,6 +383,34 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
+  Widget _buildCategoryDropdown() {
+    return DropdownButtonFormField<Category>(
+      value: _selectedCategory,
+      decoration: const InputDecoration(
+        labelText: 'Kategori',
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.category),
+      ),
+      items: _categories.map((category) {
+        return DropdownMenuItem<Category>(
+          value: category,
+          child: Text(category.name),
+        );
+      }).toList(),
+      onChanged: (Category? newValue) {
+        setState(() {
+          _selectedCategory = newValue;
+        });
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Kategori harus dipilih';
+        }
+        return null;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -383,8 +440,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   return null;
                 },
               ),
+               const SizedBox(height: 16),
+              _buildCategoryDropdown(),
               const SizedBox(height: 16),
-
               // Image picker section
               _buildImagePreview(),
 

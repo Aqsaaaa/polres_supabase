@@ -161,6 +161,8 @@ class _HistoryScreenState extends State<HistoryScreen>
           children: [
             Text('Peminjam: ${history.borrowerName}'),
             Text('Penanggung Jawab: ${history.responsiblePerson}'),
+            Text('Kategori: ${history.category}'),
+            Text('Tujuan: ${history.purpose}'),
             Text(
               isBorrowed
                   ? 'Dipinjam: ${_formatDate(history.createdAt)}'

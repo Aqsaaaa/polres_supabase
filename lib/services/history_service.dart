@@ -7,8 +7,10 @@ class HistoryService {
         .from(Tables.transactions)
         .select()
         .order('created_at', ascending: false);
-    
-    return (response as List).map((history) => History.fromJson(history)).toList();
+
+    return (response as List)
+        .map((history) => History.fromJson(history))
+        .toList();
   }
 
   static Future<List<History>> getHistoryByItemId(String itemId) async {
@@ -17,8 +19,10 @@ class HistoryService {
         .select()
         .eq('item_id', itemId)
         .order('created_at', ascending: false);
-    
-    return (response as List).map((history) => History.fromJson(history)).toList();
+
+    return (response as List)
+        .map((history) => History.fromJson(history))
+        .toList();
   }
 
   static Future<History> borrowItem({
@@ -26,6 +30,8 @@ class HistoryService {
     required String itemName,
     required String borrowerName,
     required String responsiblePerson,
+    required String category,
+    required String purpose,
     required int quantity,
   }) async {
     final response = await supabase
@@ -35,27 +41,28 @@ class HistoryService {
           'item_name': itemName,
           'borrower_name': borrowerName,
           'responsible_person': responsiblePerson,
+          'category': category,
+          'purpose': purpose,
           'quantity': quantity,
           'status': 'borrowed',
           'created_at': DateTime.now().toIso8601String(),
         })
         .select()
         .single();
-    
+
     return History.fromJson(response);
   }
 
-  static Future<History> returnItem(String historyId, int quantityToReturn) async {
+  static Future<History> returnItem(
+    String historyId,
+    int quantityToReturn,
+  ) async {
     // Get current transaction
     final currentTransaction = await supabase
         .from(Tables.transactions)
         .select()
         .eq('id', historyId)
         .single();
-
-    if (currentTransaction == null) {
-      throw Exception('Transaction not found');
-    }
 
     int currentQuantity = currentTransaction['quantity'] ?? 1;
     int newQuantity = currentQuantity - quantityToReturn;
@@ -72,9 +79,7 @@ class HistoryService {
         'quantity': 0,
       };
     } else {
-      updateData = {
-        'quantity': newQuantity,
-      };
+      updateData = {'quantity': newQuantity};
     }
 
     final response = await supabase
@@ -93,8 +98,10 @@ class HistoryService {
         .select()
         .eq('status', 'borrowed')
         .order('created_at', ascending: false);
-    
-    return (response as List).map((history) => History.fromJson(history)).toList();
+
+    return (response as List)
+        .map((history) => History.fromJson(history))
+        .toList();
   }
 
   static Future<List<History>> getReturnedItems() async {
@@ -103,7 +110,9 @@ class HistoryService {
         .select()
         .eq('status', 'returned')
         .order('returned_at', ascending: false);
-    
-    return (response as List).map((history) => History.fromJson(history)).toList();
+
+    return (response as List)
+        .map((history) => History.fromJson(history))
+        .toList();
   }
-} 
+}

@@ -16,14 +16,14 @@ class BorrowItemScreen extends StatefulWidget {
 
 class _BorrowItemScreenState extends State<BorrowItemScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _borrowerNameController = TextEditingController();
   final _quantityController = TextEditingController(text: '1');
+  final _purposeController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _borrowerNameController.dispose();
     _quantityController.dispose();
+    _purposeController.dispose();
     super.dispose();
   }
 
@@ -32,16 +32,20 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
 
     final currentUser = AuthService.getCurrentUser();
     if (currentUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User belum login')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('User belum login')));
       return;
     }
 
     final int quantity = int.tryParse(_quantityController.text) ?? 1;
     if (quantity <= 0 || quantity > widget.item.stock) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Jumlah pinjam harus antara 1 dan ${widget.item.stock}')),
+        SnackBar(
+          content: Text(
+            'Jumlah pinjam harus antara 1 dan ${widget.item.stock}',
+          ),
+        ),
       );
       return;
     }
@@ -55,8 +59,10 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
       await HistoryService.borrowItem(
         itemId: widget.item.id,
         itemName: widget.item.name,
-        borrowerName: _borrowerNameController.text.trim(),
+        borrowerName: currentUser.name,
         responsiblePerson: currentUser.name,
+        category: widget.item.category,
+        purpose: _purposeController.text.trim(),
         quantity: quantity,
       );
 
@@ -156,22 +162,6 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
               ),
               const SizedBox(height: 24),
               TextFormField(
-                controller: _borrowerNameController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Nama Peminjam',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nama peminjam tidak boleh kosong';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
                 controller: _quantityController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
@@ -183,6 +173,21 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
                   final qty = int.tryParse(value ?? '');
                   if (qty == null || qty <= 0 || qty > widget.item.stock) {
                     return 'Masukkan jumlah pinjam yang valid';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _purposeController,
+                decoration: const InputDecoration(
+                  labelText: 'Tujuan Pinjam',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.note),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tujuan pinjam tidak boleh kosong';
                   }
                   return null;
                 },

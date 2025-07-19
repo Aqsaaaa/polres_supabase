@@ -1,7 +1,4 @@
-enum HistoryStatus {
-  borrowed,
-  returned,
-}
+enum HistoryStatus { borrowed, returned }
 
 class History {
   final String id;
@@ -9,6 +6,8 @@ class History {
   final String itemName;
   final String borrowerName;
   final String responsiblePerson;
+  final String category;
+  final String purpose;
   final int quantity;
   final HistoryStatus status;
   final DateTime createdAt;
@@ -20,6 +19,8 @@ class History {
     required this.itemName,
     required this.borrowerName,
     required this.responsiblePerson,
+    required this.category,
+    required this.purpose,
     required this.quantity,
     required this.status,
     required this.createdAt,
@@ -33,14 +34,18 @@ class History {
       itemName: json['item_name'] ?? '',
       borrowerName: json['borrower_name'] ?? '',
       responsiblePerson: json['responsible_person'] ?? '',
+      category: json['category'] ?? '',
+      purpose: json['purpose'] ?? '',
       quantity: json['quantity'] ?? 1,
       status: HistoryStatus.values.firstWhere(
         (e) => e.toString() == 'HistoryStatus.${json['status']}',
         orElse: () => HistoryStatus.borrowed,
       ),
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
-      returnedAt: json['returned_at'] != null 
-          ? DateTime.parse(json['returned_at']) 
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      returnedAt: json['returned_at'] != null
+          ? DateTime.parse(json['returned_at'])
           : null,
     );
   }
@@ -52,6 +57,8 @@ class History {
       'item_name': itemName,
       'borrower_name': borrowerName,
       'responsible_person': responsiblePerson,
+      'category': category,
+      'purpose': purpose,
       'quantity': quantity,
       'status': status.toString().split('.').last,
       'created_at': createdAt.toIso8601String(),
@@ -65,6 +72,8 @@ class History {
     String? itemName,
     String? borrowerName,
     String? responsiblePerson,
+    String? category,
+    String? purpose,
     int? quantity,
     HistoryStatus? status,
     DateTime? createdAt,
@@ -76,6 +85,8 @@ class History {
       itemName: itemName ?? this.itemName,
       borrowerName: borrowerName ?? this.borrowerName,
       responsiblePerson: responsiblePerson ?? this.responsiblePerson,
+      category: category ?? this.category,
+      purpose: purpose ?? this.purpose,
       quantity: quantity ?? this.quantity,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,

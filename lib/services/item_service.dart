@@ -25,6 +25,7 @@ class ItemService {
     required String name,
     required String image,
     required int stock,
+    String category = '',
   }) async {
     final response = await supabase
         .from(Tables.items)
@@ -32,6 +33,7 @@ class ItemService {
           'name': name,
           'image': image,
           'stock': stock,
+          'category': category,
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         })
@@ -46,6 +48,7 @@ class ItemService {
     String? name,
     String? image,
     int? stock,
+    String? category,
   }) async {
     final updateData = <String, dynamic>{
       'updated_at': DateTime.now().toIso8601String(),
@@ -54,6 +57,7 @@ class ItemService {
     if (name != null) updateData['name'] = name;
     if (image != null) updateData['image'] = image;
     if (stock != null) updateData['stock'] = stock;
+    if (category != null) updateData['category'] = category;
 
     final response = await supabase
         .from(Tables.items)
