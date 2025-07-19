@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../models/item.dart';
 import '../../services/auth_service.dart';
@@ -71,14 +72,33 @@ class _BorrowItemScreenState extends State<BorrowItemScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Barang berhasil dipinjam!')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Barang "${widget.item.name}" berhasil dipinjam',
+              contentType: ContentType.success,
+            ),
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal meminjam barang: ${e.toString()}')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message:
+                  'Gagal meminjam barang "${widget.item.name}": ${e.toString()}',
+              contentType: ContentType.warning,
+            ),
+          ),
         );
       }
     } finally {

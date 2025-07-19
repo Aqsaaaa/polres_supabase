@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import '../../models/item.dart';
 import '../../services/item_service.dart';
 import 'add_item_screen.dart';
@@ -37,7 +38,16 @@ class _InventoryScreenState extends State<InventoryScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat data: ${e.toString()}')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Error',
+              message: 'Gagal memuat data: ${e.toString()}',
+              contentType: ContentType.failure,
+            ),
+          ),
         );
       }
     } finally {
@@ -76,13 +86,31 @@ class _InventoryScreenState extends State<InventoryScreen> {
         await _loadItems();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Barang berhasil dihapus')),
+            SnackBar(
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: const AwesomeSnackbarContent(
+                title: 'Success',
+                message: 'Barang berhasil dihapus',
+                contentType: ContentType.success,
+              ),
+            ),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal menghapus barang: ${e.toString()}')),
+            SnackBar(
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: 'Error',
+                message: 'Gagal menghapus barang: ${e.toString()}',
+                contentType: ContentType.failure,
+              ),
+            ),
           );
         }
       }

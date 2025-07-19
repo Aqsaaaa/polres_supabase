@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:polres_supabase/screens/home/home_screen.dart';
 import '../../services/auth_service.dart';
@@ -38,7 +39,16 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profil berhasil disimpan!')),
+          SnackBar(
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: const AwesomeSnackbarContent(
+                title: 'Success',
+                message: 'Barang berhasil dihapus',
+                contentType: ContentType.success,
+              ),
+            ),
         );
         Navigator.pushReplacement(
           context,

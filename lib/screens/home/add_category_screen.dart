@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/category_service.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class AddCategoryScreen extends StatefulWidget {
   const AddCategoryScreen({super.key});
@@ -25,14 +26,32 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
       await CategoryService.createCategory(name: _nameController.text.trim());
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kategori berhasil ditambahkan')),
+          const SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Kategori berhasil ditambahkan',
+              contentType: ContentType.warning,
+            ),
+          ),
         );
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menambahkan kategori: \$e')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Kategori gagal ditambahkan: ${e.toString()}',
+              contentType: ContentType.warning,
+            ),
+          ),
         );
       }
     } finally {

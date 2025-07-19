@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../models/history.dart';
 import '../../services/history_service.dart';
@@ -47,7 +48,16 @@ class _HistoryScreenState extends State<HistoryScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat riwayat: ${e.toString()}')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Gagal Memuat Riwayat: ${e.toString()}',
+              contentType: ContentType.success,
+            ),
+          ),
         );
       }
     } finally {
@@ -96,8 +106,14 @@ class _HistoryScreenState extends State<HistoryScreen>
               if (qty == null || qty <= 0 || qty > history.quantity) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      'Masukkan jumlah yang valid (1-${history.quantity})',
+                    elevation: 0,
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.transparent,
+                    content: AwesomeSnackbarContent(
+                      title: 'Success',
+                      message:
+                          'Masukkan jumlah yang valid (1-${history.quantity})',
+                      contentType: ContentType.warning,
                     ),
                   ),
                 );
@@ -124,14 +140,30 @@ class _HistoryScreenState extends State<HistoryScreen>
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Barang berhasil dikembalikan!')),
+            const SnackBar(
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: 'Success',
+                message: 'Barang Berhasil Dikembalikan',
+                contentType: ContentType.success,
+              ),
+            ),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Gagal mengembalikan barang: ${e.toString()}'),
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: 'Success',
+                message: 'Gagal Mengembalikan Barang: ${e.toString()}',
+                contentType: ContentType.warning,
+              ),
             ),
           );
         }

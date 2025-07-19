@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
@@ -25,7 +26,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   File? _pickedImage;
   String? _uploadedImageUrl;
 
-   List<Category> _categories = [];
+  List<Category> _categories = [];
   Category? _selectedCategory;
 
   @override
@@ -36,8 +37,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
     super.dispose();
   }
 
-   @override
-    void initState() {
+  @override
+  void initState() {
     super.initState();
     _fetchCategories();
   }
@@ -54,7 +55,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat kategori: ${e.toString()}')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Gagal Memuat Kategori: ${e.toString()}',
+              contentType: ContentType.warning,
+            ),
+          ),
         );
       }
     }
@@ -95,7 +105,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memilih gambar: ${e.toString()}')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Gagal Mengambil Gambar: ${e.toString()}',
+              contentType: ContentType.warning,
+            ),
+          ),
         );
       }
     }
@@ -202,7 +221,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gambar berhasil diupload!')),
+          const SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'gambar berhasil diupload',
+              contentType: ContentType.success,
+            ),
+          ),
         );
       }
     } catch (e) {
@@ -221,9 +249,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(errorMessage)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'gagal $errorMessage',
+              contentType: ContentType.warning,
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -241,7 +278,17 @@ class _AddItemScreenState extends State<AddItemScreen> {
     if (_uploadedImageUrl == null || _uploadedImageUrl!.isEmpty) {
       if (_pickedImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Silakan pilih gambar terlebih dahulu')),
+          const SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message:
+                  'Silahkan upload gambar terlebih dahulu sebelum menambahkan barang',
+              contentType: ContentType.help,
+            ),
+          ),
         );
         return;
       }
@@ -255,7 +302,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
       if (_uploadedImageUrl == null || _uploadedImageUrl!.isEmpty) {
         // Upload failed
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gagal mengupload gambar')),
+          const SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Gagal mengupload gambar, silahkan coba lagi',
+              contentType: ContentType.failure,
+            ),
+          ),
         );
         return;
       }
@@ -274,14 +330,32 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Barang berhasil ditambahkan!')),
+          const SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Barang berhasil ditambahkan',
+              contentType: ContentType.success,
+            ),
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menambahkan barang: ${e.toString()}')),
+          SnackBar(
+            elevation: 0,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: 'Success',
+              message: 'Gagal menambahkan barang: ${e.toString()}',
+              contentType: ContentType.failure,
+            ),
+          ),
         );
       }
     } finally {
@@ -440,7 +514,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   return null;
                 },
               ),
-               const SizedBox(height: 16),
+              const SizedBox(height: 16),
               _buildCategoryDropdown(),
               const SizedBox(height: 16),
               // Image picker section

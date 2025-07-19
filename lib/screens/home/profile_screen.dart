@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../services/auth_service.dart';
 import '../../models/user.dart' as app_user;
@@ -65,13 +66,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await AuthService.signOut();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Berhasil keluar')),
+            const SnackBar(
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: 'Success',
+                message: 'Berhasil Keluar',
+                contentType: ContentType.success,
+              ),
+            ),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal keluar: ${e.toString()}')),
+            SnackBar(
+              elevation: 0,
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: 'Error',
+                message: 'Gagal Keluar: ${e.toString()}',
+                contentType: ContentType.failure,
+              ),
+            ),
           );
         }
       }
@@ -118,10 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 8),
                   Text(
                     _currentUser!.email,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 32),
                   Card(
@@ -136,11 +152,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ListTile(
                           leading: const Icon(Icons.person, color: Colors.blue),
                           title: const Text('Nama'),
-                          subtitle: Text(_currentUser!.name.isNotEmpty ? _currentUser!.name : 'Belum diisi'),
+                          subtitle: Text(
+                            _currentUser!.name.isNotEmpty
+                                ? _currentUser!.name
+                                : 'Belum diisi',
+                          ),
                         ),
                         const Divider(height: 1),
                         ListTile(
-                          leading: const Icon(Icons.calendar_today, color: Colors.blue),
+                          leading: const Icon(
+                            Icons.calendar_today,
+                            color: Colors.blue,
+                          ),
                           title: const Text('Bergabung Sejak'),
                           subtitle: Text(_formatDate(_currentUser!.createdAt)),
                         ),
@@ -173,4 +196,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-} 
+}
